@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - SportEvents Admin</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin-left: 280px;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        .card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border: 1px solid #e2e8f0;
+            background-color: #f9fafc;
+        }
+
+        .form-control:focus {
+            border-color: #e4821e;
+            box-shadow: 0 0 0 3px rgba(228, 130, 30, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(228, 130, 30, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(228, 130, 30, 0.4);
+            background: linear-gradient(135deg, #f19832 0%, #b16a1e 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .info-section {
+            background-color: #fff8ee;
+            border-left: 4px solid #e4821e;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0 10px 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Main Content -->
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Alert Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${successMessage}">Message de succès</span>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${errorMessage}">Message d'erreur</span>
+        </div>
+
+        <h1 class="page-title">Mon Profil</h1>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-user-edit me-2"></i> Modifier mes informations personnelles
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="info-section mb-4">
+                            <p class="mb-0"><i class="fas fa-info-circle me-2"></i> Mettez à jour vos informations personnelles ci-dessous. Votre nom d'utilisateur ne peut pas être modifié.</p>
+                        </div>
+
+                        <form th:action="@{/admin/profile/update}" method="post" th:object="${admin}">
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="hidden" th:field="*{role}" />
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nom d'utilisateur</label>
+                                <input type="text" class="form-control" id="username" th:field="*{username}" readonly />
+                                <small class="text-muted">Le nom d'utilisateur ne peut pas être modifié</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nom" class="form-label">Nom</label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label">Prénom</label>
+                                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Adresse e-mail</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Nouveau mot de passe</label>
+                                <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Laissez vide pour conserver le mot de passe actuel" />
+                                <small class="text-muted">Remplissez uniquement si vous souhaitez changer votre mot de passe</small>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i> Enregistrer les modifications
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-shield-alt me-2"></i> Informations du compte
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="me-3 text-center" style="width: 60px; height: 60px; background-color: #e4821e; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i class="fas fa-user-circle" style="font-size: 2rem;"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0" th:text="${admin.prenom + ' ' + admin.nom}">Nom de l'Admin</h5>
+                                <span class="text-muted" th:text="${admin.username}">username</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Rôle</label>
+                            <p class="mb-0">
+                                <span class="badge bg-success">Administrateur</span>
+                            </p>
+                        </div>
+
+                        <div class="mb-0">
+                            <label class="form-label fw-bold">Contact</label>
+                            <p class="mb-1">
+                                <i class="fas fa-envelope me-2"></i> <span th:text="${admin.email}">email@example.com</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap and JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportEvents - Trouvez vos événements sportifs préférés</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e4821e;
+            --primary-dark: #a35c0d;
+            --primary-light: #f6c088;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--white);
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link {
+            color: var(--white) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-auth {
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+        }
+
+        .btn-login:hover {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        .btn-register {
+            background-color: var(--white);
+            color: var(--primary);
+            margin-left: 10px;
+        }
+
+        .btn-register:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-dark);
+        }
+
+        .dropdown-toggle::after {
+            margin-left: 0.5rem;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .dropdown-item i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--white);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-bar {
+            background-color: var(--white);
+            border-radius: 50px;
+            padding: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            border: none;
+            padding: 15px 20px;
+            width: 75%;
+            font-size: 1rem;
+            border-radius: 50px 0 0 50px;
+            outline: none;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 0 50px 50px 0;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 25%;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #f19832 0%, #b16a1e 100%);
+        }
+
+        .featured-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            color: var(--dark-gray);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 2px;
+        }
+
+        /* Nouveau style pour les cartes d'événements */
+        .event-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            height: 100%;
+            border: none;
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .event-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(228, 130, 30, 0.15);
+        }
+
+        .event-image-container {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f8f9fa;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            display: block;
+        }
+
+        .event-card:hover .event-image {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .event-date {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(228, 130, 30, 0.9);
+            color: var(--white);
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .event-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: var(--dark-gray);
+            transition: color 0.3s ease;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-card:hover .event-title {
+            color: var(--primary);
+        }
+
+        .event-location {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .event-location i {
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        .event-price {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            margin-bottom: 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .event-price::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 40%;
+            height: 2px;
+            background-color: var(--primary-light);
+            border-radius: 2px;
+        }
+
+        .category-section {
+            padding: 80px 0;
+            background-color: var(--light-gray);
+        }
+
+        .category-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .category-count {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1579456506295-7e4df36c8149?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+            padding: 100px 0;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #f19832 0%, #b16a1e 100%);
+            color: var(--white);
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: var(--white);
+            padding: 50px 0 20px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .footer-links h5 {
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-links h5::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .social-icons {
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            color: var(--white);
+            font-size: 1.2rem;
+            margin-right: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 30px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Media queries pour responsive */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                max-width: 95% !important;
+                width: 95% !important;
+                margin: 1rem auto;
+            }
+
+            .event-modal-details {
+                height: auto !important;
+                max-height: 400px;
+            }
+
+            .col-md-6 {
+                padding: 2rem !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-item {
+                margin-bottom: 5px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .search-input, .search-btn {
+                width: 100%;
+                border-radius: 50px;
+                margin: 5px 0;
+            }
+        }
+        /* Styles pour le modal d'événement - À ajouter dans la section <style> */
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-bottom: none;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .modal-body {
+            padding: 0;
+        }
+
+        .event-modal-details {
+            padding: 30px;
+        }
+
+        .modal-event-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        .modal-event-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #6c757d;
+        }
+
+        .modal-event-info i {
+            color: var(--primary);
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .capacity-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .btn-reserve {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reserve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(228, 130, 30, 0.4);
+            background: linear-gradient(135deg, #f19832 0%, #b16a1e 100%);
+            color: white;
+        }
+
+        .event-status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-collapse {
+                margin-top: 15px;
+            }
+
+            .btn-auth {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .hero-content {
+                padding: 0 20px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #ffffff;
+                border-radius: 50%;
+                border-top-color: transparent;
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+
+            .btn-reserve:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .ticket-option {
+                transition: all 0.3s ease;
+                border-color: #dee2e6 !important;
+            }
+
+            .ticket-option:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                border-color: var(--primary) !important;
+            }
+
+            .ticket-option.selected {
+                border-color: var(--primary) !important;
+                background-color: rgba(228, 130, 30, 0.05);
+                box-shadow: 0 0 0 2px rgba(228, 130, 30, 0.2);
+            }
+
+            .ticket-option.selected .card-title {
+                color: var(--primary) !important;
+            }
+
+            .btn-outline-secondary {
+                border-color: #dee2e6;
+                color: #6c757d;
+            }
+
+            .btn-outline-secondary:hover {
+                background-color: var(--primary);
+                border-color: var(--primary);
+                color: white;
+            }
+
+            #nombreBillets {
+                border: 2px solid #dee2e6;
+            }
+
+            #nombreBillets:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.2rem rgba(228, 130, 30, 0.25);
+            }
+
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #ffffff;
+                border-radius: 50%;
+                border-top-color: transparent;
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Trouvez et réservez vos événements sportifs préférés</h1>
+            <p class="hero-subtitle">Des milliers d'événements sportifs à travers toute la France. Trouvez vos billets maintenant !</p>
+            <div class="search-bar d-flex">
+                <input type="text" class="search-input" placeholder="Rechercher un événement, une équipe ou un lieu...">
+                <button class="search-btn">
+                    <i class="fas fa-search me-2"></i> Rechercher
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Events Section -->
+<section class="featured-section">
+    <div class="container">
+        <h2 class="section-title">Événements à la Une</h2>
+        <div class="row g-4 mt-4">
+            <!-- Boucle sur les événements -->
+            <div class="col-lg-4 col-md-6" th:each="event : ${featuredEvents}">
+                <div class="event-card">
+                    <!-- Date de l'événement -->
+                    <span class="event-date">
+                        <i class="far fa-calendar-alt me-1"></i>
+                        <span th:text="${#temporals.format(event.dateDebut, 'dd MMM yyyy')}">Date</span>
+                    </span>
+
+                    <!-- Image de l'événement -->
+                    <div class="event-image-container">
+                        <div class="event-image-container">
+                            <!-- Image réelle si disponible -->
+                            <img th:if="${event.imageUrl != null && !event.imageUrl.isEmpty()}"
+                                 th:src="@{${event.imageUrl}}"
+                                 th:alt="${event.nom}"
+                                 class="event-image" />
+
+                            <!-- Image par défaut si aucune image n'est disponible -->
+                            <div th:if="${event.imageUrl == null || event.imageUrl.isEmpty()}"
+                                 class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                <i class="fas fa-image-slash fa-2x text-muted"></i>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Image par défaut si aucune image n'est disponible -->
+                        <div th:if="${event.imageUrl == null || event.imageUrl.isEmpty()}"
+                             class="d-flex align-items-center justify-content-center h-100 bg-light">
+                            <i class="fas fa-image-slash fa-2x text-muted"></i>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="event-title" th:text="${event.nom}">Titre de l'événement</h3>
+                        <p class="event-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span th:text="${event.lieu}">Lieu</span>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="event-price">
+                                À partir de <span th:text="${#numbers.formatDecimal(event.prixMin, 0, 'POINT', 2, 'COMMA')}">0</span>€
+                            </p>
+                            <!-- Remplacer le bouton "Détails" existant par celui-ci -->
+                            <button class="btn btn-sm"
+                                    style="background-color: var(--primary); color: white;"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#eventModal"
+                                    th:data-event-id="${event.id}"
+                                    th:data-event-nom="${event.nom}"
+                                    th:data-event-description="${event.description}"
+                                    th:data-event-lieu="${event.lieu}"
+                                    th:data-event-date-debut="${#temporals.format(event.dateDebut, 'dd/MM/yyyy HH:mm')}"
+                                    th:data-event-date-fin="${#temporals.format(event.dateFin, 'dd/MM/yyyy HH:mm')}"
+                                    th:data-event-prix-min="${event.prixMin}"
+                                    th:data-event-prix-max="${event.prixMax}"
+                                    th:data-event-capacite="${event.capacite}"
+                                    th:data-event-statut="${event.statut}"
+                                    th:data-event-image="${event.imageUrl}"
+                                    th:data-event-categorie="${event.categorieNom}">
+                                Détails
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a th:href="@{/events}" class="btn btn-cta">Voir tous les événements</a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="category-section">
+    <div class="container">
+        <h2 class="section-title">Catégories populaires</h2>
+        <div class="row g-4 mt-4">
+            <div class="col-lg-3 col-md-4 col-sm-6" th:each="cat : ${categories}">
+                <a th:href="@{'/events/category/' + ${cat.id}}" class="category-card h-100 text-decoration-none text-dark d-block p-3 rounded shadow-sm">
+                    <div class="category-icon mb-3">
+                        <i th:class="'fa ' + ${cat.icon}"></i>
+                    </div>
+                    <div class="category-title fw-bold" th:text="${cat.nom}">Catégorie</div>
+                    <div class="category-count text-muted" th:text="${cat.nbEvenements} + ' événements'">0 événements</div>
+                </a>
+            </div>
+
+            <div th:if="${categories == null or #lists.isEmpty(categories)}" class="col-12 text-center text-muted">
+                Aucune catégorie trouvée.
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Créez ou organisez votre propre événement sportif</h2>
+        <p class="cta-subtitle">Vous êtes un organisateur d'événements sportifs ? Créez votre compte et commencez à vendre vos billets dès aujourd'hui.</p>
+        <a th:href="@{/register}" class="btn btn-cta">Créer un compte</a>
+    </div>
+</section>
+
+<!-- Footer -->
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+<!-- Modal d'événement - À ajouter juste avant </body> -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 1200px; width: 90%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Détails de l'événement
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Image à gauche -->
+                    <div class="col-md-6 d-flex align-items-center justify-content-center p-4" style="background-color: #f8f9fa;">
+                        <div class="text-center">
+                            <img id="modalEventImage" src="" alt="Image de l'événement"
+                                 style="max-width: 100%; max-height: 400px; width: auto; height: auto; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+                            <div id="modalEventImagePlaceholder" class="d-none">
+                                <div class="d-flex align-items-center justify-content-center bg-white rounded"
+                                     style="width: 300px; height: 200px; border: 2px dashed #dee2e6;">
+                                    <i class="fas fa-image-slash fa-3x text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations à droite -->
+                    <div class="col-md-6">
+                        <div class="event-modal-details p-4" style="height: 600px; overflow-y: auto;">
+                            <h3 id="modalEventTitle" class="modal-event-title mb-3">Titre de l'événement</h3>
+
+                            <!-- Informations principales -->
+                            <div class="modal-event-info mb-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="modalEventLieu">Lieu</span>
+                            </div>
+
+                            <div class="modal-event-info mb-2">
+                                <i class="fas fa-calendar-start"></i>
+                                <span>Début : <span id="modalEventDateDebut">Date</span></span>
+                            </div>
+
+                            <div class="modal-event-info mb-2">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Fin : <span id="modalEventDateFin">Date</span></span>
+                            </div>
+
+                            <div class="modal-event-info mb-2">
+                                <i class="fas fa-tag"></i>
+                                <span>Catégorie : <span id="modalEventCategorie">Catégorie</span></span>
+                            </div>
+
+                            <div class="modal-event-info mb-3">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Statut : <span id="modalEventStatut" class="event-status-badge">Statut</span></span>
+                            </div>
+
+                            <!-- Capacité -->
+                            <div class="capacity-info mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-users me-2"></i>Capacité totale</span>
+                                    <strong id="modalEventCapacite">0</strong>
+                                </div>
+                            </div>
+
+                            <!-- Section de réservation -->
+                            <div id="reservationSection" class="border rounded p-3 mb-3" style="background-color: #f8f9fa;">
+                                <h6 class="mb-3"><i class="fas fa-ticket-alt me-2"></i>Réservation</h6>
+
+                                <!-- Sélection du type de billet -->
+                                <div class="mb-4">
+                                    <h6 class="mb-3">Choisissez votre type de billet :</h6>
+                                    <div class="row g-3">
+                                        <!-- Billet Standard -->
+                                        <div class="col-md-6">
+                                            <div class="card border-2 ticket-option" data-type="standard" style="cursor: pointer; transition: all 0.3s ease;">
+                                                <div class="card-body text-center p-3">
+                                                    <h5 class="card-title text-primary mb-2">
+                                                        <i class="fas fa-ticket-alt me-2"></i>Standard
+                                                    </h5>
+                                                    <div class="price-display mb-2">
+                                                        <span class="fs-4 fw-bold text-dark" id="prixStandard">0€</span>
+                                                    </div>
+                                                    <small class="text-muted">Accès standard à l'événement</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Billet VIP -->
+                                        <div class="col-md-6">
+                                            <div class="card border-2 ticket-option" data-type="vip" style="cursor: pointer; transition: all 0.3s ease;">
+                                                <div class="card-body text-center p-3">
+                                                    <h5 class="card-title text-warning mb-2">
+                                                        <i class="fas fa-crown me-2"></i>VIP
+                                                    </h5>
+                                                    <div class="price-display mb-2">
+                                                        <span class="fs-4 fw-bold text-dark" id="prixVip">0€</span>
+                                                    </div>
+                                                    <small class="text-muted">Accès privilégié et services premium</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sélection du nombre de billets -->
+                                <div class="mb-4">
+                                    <h6 class="mb-3">Nombre de billets :</h6>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <button type="button" class="btn btn-outline-secondary" id="btnMoins">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control mx-3 text-center fw-bold" id="nombreBillets"
+                                               value="1" min="1" max="10" style="width: 80px; font-size: 1.2rem;">
+                                        <button type="button" class="btn btn-outline-secondary" id="btnPlus">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted d-block text-center mt-2">Maximum 10 billets par réservation</small>
+                                </div>
+
+                                <!-- Récapitulatif -->
+                                <div class="bg-light rounded p-3 mb-4">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Type de billet :</span>
+                                        <strong id="recapType">Sélectionnez un type</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Nombre de billets :</span>
+                                        <strong id="recapNombre">1</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Prix unitaire :</span>
+                                        <strong id="recapPrixUnitaire">0€</strong>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between fs-5 text-primary">
+                                        <span class="fw-bold">Total :</span>
+                                        <strong id="recapTotal">0€</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Messages -->
+                                <div id="messageReservation" class="alert d-none" role="alert"></div>
+
+                                <!-- Bouton de réservation -->
+                                <button type="button" class="btn btn-reserve w-100" id="btnReserver" disabled>
+                                    <span id="btnReserverText">Sélectionnez d'abord un type de billet</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const eventModal = document.getElementById('eventModal');
+        let currentEventId = null;
+        let selectedTicketType = null;
+        let prixStandard = 0;
+        let prixVip = 0;
+
+        // Éléments du DOM
+        const nombreBilletsInput = document.getElementById('nombreBillets');
+        const btnMoins = document.getElementById('btnMoins');
+        const btnPlus = document.getElementById('btnPlus');
+        const btnReserver = document.getElementById('btnReserver');
+        const btnReserverText = document.getElementById('btnReserverText');
+        const messageReservation = document.getElementById('messageReservation');
+        const ticketOptions = document.querySelectorAll('.ticket-option');
+
+        // Éléments du récapitulatif
+        const recapType = document.getElementById('recapType');
+        const recapNombre = document.getElementById('recapNombre');
+        const recapPrixUnitaire = document.getElementById('recapPrixUnitaire');
+        const recapTotal = document.getElementById('recapTotal');
+
+        // Fonction pour sélectionner un type de billet
+        function selectionnerTypeBillet(type) {
+            selectedTicketType = type;
+
+            // Mettre à jour l'affichage des cartes
+            ticketOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            const selectedOption = document.querySelector(`.ticket-option[data-type="${type}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+            }
+
+            // Mettre à jour le récapitulatif
+            const typeName = type === 'standard' ? 'Standard' : 'VIP';
+            const prix = type === 'standard' ? prixStandard : prixVip;
+
+            recapType.textContent = typeName;
+            recapPrixUnitaire.textContent = prix.toFixed(2) + '€';
+
+            // Activer le bouton de réservation
+            btnReserver.disabled = false;
+            btnReserverText.textContent = 'Réserver maintenant';
+
+            calculerTotal();
+            masquerMessage();
+        }
+
+        // Fonction pour calculer le prix total
+        function calculerTotal() {
+            if (!selectedTicketType) return;
+
+            const nombreBillets = parseInt(nombreBilletsInput.value) || 1;
+            const prixUnitaire = selectedTicketType === 'standard' ? prixStandard : prixVip;
+            const total = prixUnitaire * nombreBillets;
+
+            recapNombre.textContent = nombreBillets;
+            recapTotal.textContent = total.toFixed(2) + '€';
+        }
+
+        // Fonction pour afficher un message
+        function afficherMessage(message, type = 'info') {
+            messageReservation.className = `alert alert-${type}`;
+            messageReservation.textContent = message;
+            messageReservation.classList.remove('d-none');
+        }
+
+        // Fonction pour masquer le message
+        function masquerMessage() {
+            messageReservation.classList.add('d-none');
+        }
+
+        // Gestionnaires pour les options de billets
+        ticketOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                selectionnerTypeBillet(type);
+            });
+        });
+
+        // Gestionnaires pour les boutons + et -
+        btnMoins.addEventListener('click', function() {
+            const currentValue = parseInt(nombreBilletsInput.value) || 1;
+            if (currentValue > 1) {
+                nombreBilletsInput.value = currentValue - 1;
+                calculerTotal();
+            }
+        });
+
+        btnPlus.addEventListener('click', function() {
+            const currentValue = parseInt(nombreBilletsInput.value) || 1;
+            if (currentValue < 10) {
+                nombreBilletsInput.value = currentValue + 1;
+                calculerTotal();
+            }
+        });
+
+        // Gestionnaire pour le changement direct dans l'input
+        nombreBilletsInput.addEventListener('input', function() {
+            let value = parseInt(this.value) || 1;
+
+            if (value < 1) {
+                value = 1;
+                this.value = 1;
+            } else if (value > 10) {
+                value = 10;
+                this.value = 10;
+            }
+
+            calculerTotal();
+        });
+
+        // Ouverture du modal
+        eventModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+
+            // Récupérer les données de l'événement
+            currentEventId = button.getAttribute('data-event-id');
+            const eventNom = button.getAttribute('data-event-nom');
+            const eventLieu = button.getAttribute('data-event-lieu');
+            const eventDateDebut = button.getAttribute('data-event-date-debut');
+            const eventDateFin = button.getAttribute('data-event-date-fin');
+            const eventPrixMin = parseFloat(button.getAttribute('data-event-prix-min'));
+            const eventPrixMax = parseFloat(button.getAttribute('data-event-prix-max'));
+            const eventCapacite = button.getAttribute('data-event-capacite');
+            const eventStatut = button.getAttribute('data-event-statut');
+            const eventImage = button.getAttribute('data-event-image');
+            const eventCategorie = button.getAttribute('data-event-categorie');
+
+            // Calculer les prix des billets (Standard = prix min, VIP = prix max)
+            prixStandard = eventPrixMin;
+            prixVip = eventPrixMax;
+
+            // Remplir le modal avec les données
+            document.getElementById('modalEventTitle').textContent = eventNom;
+            document.getElementById('modalEventLieu').textContent = eventLieu;
+            document.getElementById('modalEventDateDebut').textContent = eventDateDebut;
+            document.getElementById('modalEventDateFin').textContent = eventDateFin;
+            document.getElementById('modalEventCapacite').textContent = eventCapacite;
+            document.getElementById('modalEventCategorie').textContent = eventCategorie;
+
+            // Afficher les prix des billets
+            document.getElementById('prixStandard').textContent = prixStandard.toFixed(2) + '€';
+            document.getElementById('prixVip').textContent = prixVip.toFixed(2) + '€';
+
+            // Gérer l'image
+            const modalImage = document.getElementById('modalEventImage');
+            const imagePlaceholder = document.getElementById('modalEventImagePlaceholder');
+
+            if (eventImage && eventImage !== 'null' && eventImage !== '') {
+                modalImage.src = eventImage;
+                modalImage.classList.remove('d-none');
+                imagePlaceholder.classList.add('d-none');
+            } else {
+                modalImage.classList.add('d-none');
+                imagePlaceholder.classList.remove('d-none');
+            }
+
+            // Gérer le statut
+            const statutElement = document.getElementById('modalEventStatut');
+            statutElement.textContent = eventStatut;
+            statutElement.className = 'event-status-badge';
+
+            if (eventStatut === 'DISPONIBLE') {
+                statutElement.classList.add('status-disponible');
+            } else if (eventStatut === 'COMPLET') {
+                statutElement.classList.add('status-complet');
+            }
+
+            // Réinitialiser la section de réservation
+            selectedTicketType = null;
+            nombreBilletsInput.value = 1;
+
+            // Réinitialiser les cartes de billets
+            ticketOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // Réinitialiser le récapitulatif
+            recapType.textContent = 'Sélectionnez un type';
+            recapNombre.textContent = '1';
+            recapPrixUnitaire.textContent = '0€';
+            recapTotal.textContent = '0€';
+
+            // Désactiver le bouton de réservation
+            btnReserver.disabled = true;
+            btnReserverText.textContent = 'Sélectionnez d\'abord un type de billet';
+
+            masquerMessage();
+        });
+
+        // Gestionnaire pour le bouton de réservation
+        btnReserver.addEventListener('click', async function() {
+            if (!currentEventId || !selectedTicketType) return;
+
+            const nombreBillets = parseInt(nombreBilletsInput.value) || 1;
+            const prixUnitaire = selectedTicketType === 'standard' ? prixStandard : prixVip;
+
+            // Désactiver le bouton et afficher le loading
+            btnReserver.disabled = true;
+            btnReserverText.innerHTML = '<span class="loading-spinner me-2"></span>Réservation en cours...';
+            masquerMessage();
+
+            try {
+                const response = await fetch('/reservations/reserver', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        eventId: currentEventId,
+                        nombrePlaces: nombreBillets,
+                        typeBillet: selectedTicketType,
+                        prixUnitaire: prixUnitaire
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    const typeName = selectedTicketType === 'standard' ? 'Standard' : 'VIP';
+                    afficherMessage(`Réservation confirmée ! Numéro: ${data.numeroReservation}. ${nombreBillets} billet(s) ${typeName}. Total: ${data.prixTotal}€`, 'success');
+
+                    // Réinitialiser le formulaire
+                    selectedTicketType = null;
+                    nombreBilletsInput.value = 1;
+                    ticketOptions.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+
+                    recapType.textContent = 'Sélectionnez un type';
+                    recapNombre.textContent = '1';
+                    recapPrixUnitaire.textContent = '0€';
+                    recapTotal.textContent = '0€';
+
+                    // Fermer le modal après 3 secondes
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(eventModal).hide();
+                    }, 3000);
+
+                } else {
+                    afficherMessage(data.error || 'Une erreur est survenue lors de la réservation', 'danger');
+                }
+
+            } catch (error) {
+                console.error('Erreur lors de la réservation:', error);
+                afficherMessage('Une erreur est survenue lors de la réservation', 'danger');
+            } finally {
+                // Réactiver le bouton
+                if (selectedTicketType) {
+                    btnReserver.disabled = false;
+                    btnReserverText.innerHTML = '<i class="fas fa-ticket-alt me-2"></i>Réserver maintenant';
+                } else {
+                    btnReserver.disabled = true;
+                    btnReserverText.textContent = 'Sélectionnez d\'abord un type de billet';
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

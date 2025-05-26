@@ -1,0 +1,163 @@
+<!-- sidebar.html -->
+<nav th:fragment="sidebar" class="sidebar-container d-flex flex-column" style="width: 280px; min-height: 100vh; position: fixed; left: 0; top: 0; background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%); box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1); z-index: 1000;">
+    <!-- Header avec logo -->
+    <div class="sidebar-header" style="padding: 2rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <a href="/" class="d-flex align-items-center text-decoration-none text-white" style="transition: all 0.3s ease;">
+            <div style="position: relative; margin-right: 1rem; width: 48px; height: 48px; border-radius: 12px; background-color: white; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.3s ease;">
+                <i class="fas fa-running" style="font-size: 1.8rem; color: #e4821e;"></i>
+            </div>
+            <div class="d-flex flex-column">
+                <span style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px;">SportEvents</span>
+                <span style="font-size: 0.75rem; opacity: 0.8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;">Admin Panel</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="flex-grow-1" style="padding: 1rem 0; overflow-y: auto;">
+        <ul class="list-unstyled m-0 p-0">
+            <li style="margin: 0.25rem 1rem;">
+                <a th:href="@{/admin/dashboard}"
+                   class="d-flex align-items-center text-decoration-none nav-link-custom
+                          [[${#httpServletRequest.requestURI.matches('/admin/dashboard.*')} ? 'active-custom' : '']]"
+                   style="padding: 1rem 1.25rem; color: rgba(255, 255, 255, 0.9); border-radius: 12px; transition: all 0.3s ease; position: relative; font-weight: 500;">
+                    <div style="width: 20px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                        <i class="fas fa-tachometer-alt" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <span style="flex: 1; font-size: 0.95rem;">Dashboard</span>
+                </a>
+            </li>
+            <li style="margin: 0.25rem 1rem;">
+                <a th:href="@{/admin/users}"
+                   class="d-flex align-items-center text-decoration-none nav-link-custom
+                          [[${#httpServletRequest.requestURI.matches('/admin/users.*')} ? 'active-custom' : '']]"
+                   style="padding: 1rem 1.25rem; color: rgba(255, 255, 255, 0.9); border-radius: 12px; transition: all 0.3s ease; position: relative; font-weight: 500;">
+                    <div style="width: 20px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                        <i class="fas fa-users" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <span style="flex: 1; font-size: 0.95rem;">Utilisateurs</span>
+                </a>
+            </li>
+            <li style="margin: 0.25rem 1rem;">
+                <a th:href="@{/admin/admins}"
+                   class="d-flex align-items-center text-decoration-none nav-link-custom
+                          [[${#httpServletRequest.requestURI.matches('/admin/admins.*')} ? 'active-custom' : '']]"
+                   style="padding: 1rem 1.25rem; color: rgba(255, 255, 255, 0.9); border-radius: 12px; transition: all 0.3s ease; position: relative; font-weight: 500;">
+                    <div style="width: 20px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                        <i class="fas fa-user-shield" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <span style="flex: 1; font-size: 0.95rem;">Administrateurs</span>
+                </a>
+            </li>
+            <li style="margin: 0.25rem 1rem;">
+                <a th:href="@{/admin/events}"
+                   class="d-flex align-items-center text-decoration-none nav-link-custom
+                          [[${#httpServletRequest.requestURI.matches('/admin/events.*')} ? 'active-custom' : '']]"
+                   style="padding: 1rem 1.25rem; color: rgba(255, 255, 255, 0.9); border-radius: 12px; transition: all 0.3s ease; position: relative; font-weight: 500;">
+                    <div style="width: 20px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                        <i class="fas fa-calendar-alt" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <span style="flex: 1; font-size: 0.95rem;">Événements</span>
+                </a>
+            </li>
+            <li style="margin: 0.25rem 1rem;">
+                <a th:href="@{/admin/categories}"
+                   class="d-flex align-items-center text-decoration-none nav-link-custom
+                          [[${#httpServletRequest.requestURI.matches('/admin/categories.*')} ? 'active-custom' : '']]"
+                   style="padding: 1rem 1.25rem; color: rgba(255, 255, 255, 0.9); border-radius: 12px; transition: all 0.3s ease; position: relative; font-weight: 500;">
+                    <div style="width: 20px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                        <i class="fas fa-tags" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <span style="flex: 1; font-size: 0.95rem;">Catégories</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- User Profile & Logout -->
+    <div style="padding: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.1);">
+        <div class="d-flex align-items-center mb-3"
+             style="padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;"
+             onclick="window.location.href='/admin/profile'">
+            <div style="margin-right: 0.75rem; color: rgba(255, 255, 255, 0.9);">
+                <i class="fas fa-user-circle" style="font-size: 2rem;"></i>
+            </div>
+            <div class="d-flex flex-column flex-grow-1">
+            <span th:text="${#authentication.name}"
+                  style="color: white; font-weight: 600; font-size: 0.95rem; margin-bottom: 2px;">admin</span>
+                <span style="color: rgba(255, 255, 255, 0.7); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">Administrateur</span>
+            </div>
+        </div>
+        <form th:action="@{/logout}" method="post" style="margin: 0;">
+            <button type="submit" class="btn w-100 d-flex align-items-center justify-content-center"
+                    style="padding: 0.75rem 1rem; background: linear-gradient(135deg, #ff6b6b, #ee5a52); color: white; border: none; border-radius: 10px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(238, 90, 82, 0.3);">
+                <i class="fas fa-sign-out-alt me-2" style="font-size: 1rem;"></i>
+                <span>Déconnexion</span>
+            </button>
+        </form>
+    </div>
+</nav>
+
+<style>
+    /* Styles pour les liens de navigation */
+    .nav-link-custom:hover {
+        color: white !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        transform: translateX(4px);
+        text-decoration: none;
+    }
+
+    .nav-link-custom.active-custom {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link-custom.active-custom::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 30px;
+        background: white;
+        border-radius: 1.5px;
+    }
+
+    /* Style pour le bouton de déconnexion */
+    .btn:hover {
+        background: linear-gradient(135deg, #ff5252, #e53e3e) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(238, 90, 82, 0.4) !important;
+    }
+
+    .btn:active {
+        transform: translateY(0) !important;
+    }
+
+    /* Animation d'entrée */
+    .sidebar-container {
+        animation: slideInLeft 0.4s ease-out;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar-container {
+            width: 100% !important;
+            position: relative !important;
+            min-height: auto !important;
+        }
+    }
+</style>

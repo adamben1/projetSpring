@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - SportEvents</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .register-container {
+            padding: 2rem;
+        }
+
+        .card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border: 1px solid #e2e8f0;
+            background-color: #f9fafc;
+        }
+
+        .form-control:focus {
+            border-color: #e4821e;
+            box-shadow: 0 0 0 3px rgba(228, 130, 30, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(228, 130, 30, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(228, 130, 30, 0.4);
+            background: linear-gradient(135deg, #f19832 0%, #b16a1e 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .register-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            color: white;
+        }
+
+        .register-logo {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-link {
+            color: #e4821e;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .login-link:hover {
+            color: #a35c0d;
+            text-decoration: underline;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 1rem;
+            color: #a0aec0;
+        }
+
+        .input-icon input {
+            padding-left: 2.8rem;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #4a5568;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+<div class="container register-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="register-logo">
+                        <div class="brand-icon">
+                            <i class="fas fa-running" style="font-size: 2.5rem; color: #e4821e;"></i>
+                        </div>
+                        <h1 class="register-title">SportEvents</h1>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Alert Messages -->
+                    <div th:if="${param.registered}" class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Inscription réussie! Vous pouvez maintenant vous connecter.
+                    </div>
+
+                    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Une erreur s'est produite lors de l'inscription. Veuillez réessayer.
+                    </div>
+
+                    <div th:if="${param.usernameExists}" class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Ce nom d'utilisateur est déjà utilisé. Veuillez en choisir un autre.
+                    </div>
+
+                    <div th:if="${param.emailExists}" class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Cette adresse email est déjà associée à un compte existant.
+                    </div>
+
+                    <form th:action="@{/register}" th:object="${registrationDto}" method="post">
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-shield me-2"></i>Informations de connexion
+                            </h3>
+                            <div class="mb-3">
+                                <label for="username" class="form-label fw-bold">Nom d'utilisateur</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" class="form-control" id="username" th:field="*{username}" required>
+                                </div>
+                                <small th:if="${#fields.hasErrors('username')}" class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <span th:errors="*{username}">Erreur de nom d'utilisateur</span>
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-bold">Mot de passe</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                                </div>
+                                <small th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <span th:errors="*{password}">Erreur de mot de passe</span>
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-bold">Email</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                </div>
+                                <small th:if="${#fields.hasErrors('email')}" class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <span th:errors="*{email}">Erreur d'email</span>
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-address-card me-2"></i>Informations personnelles
+                            </h3>
+                            <div class="mb-3">
+                                <label for="nom" class="form-label fw-bold">Nom</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" class="form-control" id="nom" th:field="*{nom}">
+                                </div>
+                                <small th:if="${#fields.hasErrors('nom')}" class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <span th:errors="*{nom}">Erreur de nom</span>
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="prenom" class="form-label fw-bold">Prénom</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" class="form-control" id="prenom" th:field="*{prenom}">
+                                </div>
+                                <small th:if="${#fields.hasErrors('prenom')}" class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    <span th:errors="*{prenom}">Erreur de prénom</span>
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i> S'inscrire
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a th:href="@{/login}" class="login-link">
+                            <i class="fas fa-sign-in-alt me-1"></i> Déjà un compte? Connectez-vous
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap and JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

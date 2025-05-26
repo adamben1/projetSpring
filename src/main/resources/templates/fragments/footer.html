@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="footer-logo">
+                    <div class="brand-icon me-2">
+                        <i class="fas fa-running" style="font-size: 1.2rem; color: #e4821e;"></i>
+                    </div>
+                    SportEvents
+                </div>
+                <p>SportEvents est votre plateforme pour trouver et réserver des billets pour les événements sportifs partout en France.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-4 col-6 mb-4">
+                <div class="footer-links">
+                    <h5>SportEvents</h5>
+                    <ul>
+                        <li><a href="#">À propos de nous</a></li>
+                        <li><a href="#">Événements</a></li>
+                        <li><a href="#">Catégories</a></li>
+                        <li><a href="#">Comment ça marche</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-4 col-6 mb-4">
+                <div class="footer-links">
+                    <h5>Support</h5>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contactez-nous</a></li>
+                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="#">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4 mb-4">
+                <div class="footer-links">
+                    <h5>Newsletter</h5>
+                    <p>Inscrivez-vous pour recevoir les dernières actualités et offres spéciales.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Votre email" aria-label="Votre email">
+                        <button class="btn btn-primary" type="button" style="background-color: #e4821e; border-color: #e4821e;">S'inscrire</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>&copy; 2025 SportEvents. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
+</html>
+
+<style>
+    .footer {
+        background-color: #343a40;
+        color: var(--white);
+        padding: 50px 0 20px;
+    }
+
+    .footer-logo {
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--white);
+        margin-bottom: 20px;
+    }
+
+    .footer-links h5 {
+        font-weight: 700;
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .footer-links h5::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background-color: var(--primary);
+    }
+
+    .footer-links ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 10px;
+    }
+
+    .footer-links a {
+        color: #adb5bd;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+        color: var(--primary);
+        padding-left: 5px;
+    }
+
+    .social-icons {
+        margin-top: 20px;
+    }
+
+    .social-icons a {
+        color: var(--white);
+        font-size: 1.2rem;
+        margin-right: 15px;
+        background-color: rgba(255, 255, 255, 0.1);
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+        background-color: var(--primary);
+        transform: translateY(-3px);
+    }
+
+    .copyright {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 20px;
+        margin-top: 30px;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>

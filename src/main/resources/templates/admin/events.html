@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Gestion des événements - SportEvents</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            background-color: #f9fafb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            width: 260px;
+            background: linear-gradient(180deg, #a35c0d 40%, #d57b1a 100%);
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .header-orange {
+            background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.4rem;
+            box-shadow: 0 4px 12px rgba(255,115,0,0.15);
+        }
+        .btn-add:hover {
+            background: #ea7a34;
+        }
+        .card-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .event-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            margin-right: 10px;
+            background-color: #ff7300;
+        }
+        .badge-status {
+            font-size: 0.85rem;
+            padding: 0.35em 0.75em;
+            border-radius: 12px;
+        }
+        .av { background-color: #eaf1ff; color: #2563eb; }
+        .ec { background-color: #eafff2; color: #22c55e; }
+        .te { background-color: #f3f4f6; color: #6b7280; }
+        .form-label {
+            font-weight: 600;
+        }
+        .event-image-container {
+            width: 100px;
+            height: 70px;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .event-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .event-image-preview {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        /* Ajout de classes pour corriger l'affichage du tableau */
+        .table th, .table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        /* Largeurs de colonnes pour éviter les décalages */
+        .col-image { width: 110px; max-width: 110px; }
+        .col-event { width: 200px; }
+        .col-cat { width: 120px; }
+        .col-place { width: 200px; }
+        .col-date { width: 220px; }
+        .col-price { width: 150px; }
+        .col-capacity { width: 120px; }
+        .col-status { width: 120px; }
+        .col-actions { width: 100px; }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+    <h2 class="fw-bold mb-4">Gestion des événements</h2>
+
+    <div class="header-orange d-flex justify-content-between align-items-center">
+        <div>
+            <i class="fa-solid fa-calendar-days me-2"></i>
+            <span class="fs-5 fw-semibold">Liste des événements</span>
+        </div>
+        <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addEventModal">
+            <i class="fas fa-plus me-2"></i>Ajouter un événement
+        </button>
+    </div>
+
+    <div class="card-content">
+        <!-- Barre de recherche adaptée à une card -->
+        <div class="d-flex justify-content-end mb-4">
+            <div class="position-relative" style="max-width: 300px; width: 100%;">
+                <input type="search" id="searchInput" class="form-control ps-5" placeholder="Rechercher un evenement..." aria-label="Recherche administrateur">
+                <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th class="col-image"><i class="fa-solid fa-image me-1"></i>Image</th>
+                    <th class="col-event"><i class="fa-solid fa-heading me-1"></i>Événement</th>
+                    <th class="col-cat"><i class="fa-solid fa-list me-1"></i>Catégorie</th>
+                    <th class="col-place"><i class="fa-solid fa-location-dot me-1"></i>Lieu</th>
+                    <th class="col-date"><i class="fa-solid fa-calendar-day me-1"></i>Date & Heure</th>
+                    <th class="col-price"><i class="fa-solid fa-euro-sign me-1"></i>Prix</th>
+                    <th class="col-capacity"><i class="fa-solid fa-users me-1"></i>Capacité</th>
+                    <th class="col-status"><i class="fa-solid fa-bolt me-1"></i>Statut</th>
+                    <th class="col-actions"><i class="fas fa-gear me-1"></i>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="event : ${events}">
+                    <td class="col-image">
+                        <div class="event-image-container">
+                            <img th:if="${event.imageUrl != null}" th:src="@{${event.imageUrl}}" alt="Image événement" class="event-image" />
+                            <i th:if="${event.imageUrl == null}" class="fa-solid fa-image-slash text-muted"></i>
+                        </div>
+                    </td>
+                    <td class="col-event align-middle">
+                        <div class="d-flex align-items-center">
+                            <span class="event-icon me-2" th:classappend="${event.categorieNom.toLowerCase()}">
+                                <i th:class="'fa-solid ' + ${event.categorieIcon}"></i>
+                            </span>
+                            <span th:text="${event.nom}" class="fw-semibold"></span>
+                        </div>
+                    </td>
+
+                    <td class="col-cat"><span class="badge bg-light text-dark" th:text="${event.categorieNom}"></span></td>
+                    <td class="col-place" th:text="${event.lieu}"></td>
+                    <td class="col-date">
+                        <span th:text="${#temporals.format(event.dateDebut, 'dd-MM-yyyy - HH:mm')}"></span>
+                        <span th:if="${event.dateFin != null}"> - <span th:text="${#temporals.format(event.dateFin, 'HH:mm')}"></span></span>
+                    </td>
+                    <td class="col-price">
+                        <span th:if="${event.prixMin != event.prixMax}" th:text="${event.prixMin} + '€ - ' + ${event.prixMax} + '€'"></span>
+                        <span th:if="${event.prixMin == event.prixMax}" th:text="${event.prixMin} + '€'"></span>
+                    </td>
+                    <td class="col-capacity" th:text="${event.capacite} + ' places'"></td>
+                    <td class="col-status">
+                        <span th:class="'badge badge-status ' + (${event.statut == 'À venir' ? 'av' : (event.statut == 'En cours' ? 'ec' : 'te')})"
+                              th:text="${event.statut}"></span>
+                    </td>
+                    <td class="col-actions">
+                        <button class="btn btn-sm btn-outline-primary me-1" title="Modifier"
+                                th:data-bs-toggle="modal"
+                                th:data-bs-target="'#editEventModal' + ${event.id}">
+                            <i class="fas fa-pen-to-square"></i>
+                        </button>
+                        <button
+                                class="btn btn-sm btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmDeleteModal"
+                                th:attr="data-id=${event.id},data-name=${event.nom}"
+                                onclick="prepareDeleteModal(this)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr th:if="${events == null or #lists.isEmpty(events)}">
+                    <td colspan="9" class="text-center text-muted py-3">Aucun événement trouvé.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Ajout Événement -->
+    <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form id="addEventForm" th:action="@{/admin/events/create}" method="post" class="modal-content border-0"
+                  enctype="multipart/form-data" onsubmit="return validateEventForm(this);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%); border-top-left-radius: 1rem; border-top-right-radius: 1rem; border-bottom: none;">
+                    <h5 class="modal-title text-white fw-bold d-flex align-items-center" id="addEventModalLabel">
+                        <i class="fa-solid fa-calendar-plus me-2"></i> Ajouter un événement
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body pb-0">
+                    <div class="container-fluid">
+                        <div class="row g-3">
+                            <!-- Nom de l'événement -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-heading me-1"></i> Nom de l'événement <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-heading"></i></span>
+                                    <input type="text" class="form-control" name="nom" required>
+                                </div>
+                            </div>
+                            <!-- Catégorie -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-list me-1"></i> Catégorie <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-list"></i></span>
+                                    <select class="form-select" name="categorieNom" required>
+                                        <option value="">Sélectionner une catégorie</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat.nom}" th:text="${cat.nom}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Lieu -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-location-dot me-1"></i> Lieu
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                                    <input type="text" class="form-control" name="lieu">
+                                </div>
+                            </div>
+                            <!-- Date début -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-calendar-day me-1"></i> Date début <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-calendar-day"></i></span>
+                                    <input type="datetime-local" class="form-control" name="dateDebut" id="addDateDebut" required>
+                                </div>
+                            </div>
+                            <!-- Date fin -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-calendar-check me-1"></i> Date fin
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-calendar-check"></i></span>
+                                    <input type="datetime-local" class="form-control" name="dateFin" id="addDateFin">
+                                </div>
+                            </div>
+                            <!-- Prix min/max -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-euro-sign me-1"></i> Prix (€) <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="prixMin" min="0" step="0.01" required>
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="prixMax" min="0" step="0.01" required>
+                                </div>
+                            </div>
+                            <!-- Capacité -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-users me-1"></i> Capacité <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-users"></i></span>
+                                    <input type="number" class="form-control" name="capacite" min="1" required>
+                                </div>
+                            </div>
+                            <!-- Statut -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-bolt me-1"></i> Statut <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-bolt"></i></span>
+                                    <select class="form-select" name="statut" required>
+                                        <option value="À venir">À venir</option>
+                                        <option value="En cours">En cours</option>
+                                        <option value="Terminé">Terminé</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Image -->
+                            <div class="col-12 mb-3">
+                                <label for="imageFileAdd" class="form-label">
+                                    <i class="fa-solid fa-image me-1"></i> Image de l'événement
+                                </label>
+                                <input type="file" name="imageFile" id="imageFileAdd" class="form-control" accept="image/*" />
+                                <div class="form-text">Formats acceptés: JPG, PNG, GIF (max 5MB)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="modal-footer d-flex justify-content-end gap-2 border-top-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%); border: none;">
+                        <i class="fas fa-plus me-1"></i>Ajouter l'événement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Modification Événement -->
+    <div th:each="event : ${events}" class="modal fade" th:id="'editEventModal' + ${event.id}" tabindex="-1"
+         th:attr="aria-labelledby='editEventModalLabel' + ${event.id}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form th:action="@{'/admin/events/update/' + ${event.id}}" method="post" class="modal-content border-0"
+                  enctype="multipart/form-data" onsubmit="return validateEventForm(this);">
+                <div class="modal-header" style="background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%); border-top-left-radius: 1rem; border-top-right-radius: 1rem; border-bottom: none;">
+                    <h5 class="modal-title text-white fw-bold d-flex align-items-center" th:id="'editEventModalLabel' + ${event.id}">
+                        <i class="fa-solid fa-pen-to-square me-2"></i> Modifier l'événement
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body pb-0">
+                    <div class="container-fluid">
+                        <div class="row g-3">
+                            <!-- Nom -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-heading me-1"></i> Nom de l'événement <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-heading"></i></span>
+                                    <input type="text" class="form-control" name="nom" th:value="${event.nom}" required>
+                                </div>
+                            </div>
+                            <!-- Catégorie -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-list me-1"></i> Catégorie <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-list"></i></span>
+                                    <select class="form-select" name="categorieNom" required>
+                                        <option value="">Sélectionner une catégorie</option>
+                                        <option th:each="cat : ${categories}" th:value="${cat.nom}" th:text="${cat.nom}" th:selected="${cat.nom == event.categorieNom}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Lieu -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-location-dot me-1"></i> Lieu
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+                                    <input type="text" class="form-control" name="lieu" th:value="${event.lieu}">
+                                </div>
+                            </div>
+                            <!-- Date début -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-calendar-day me-1"></i> Date début <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-calendar-day"></i></span>
+                                    <input type="datetime-local" class="form-control" name="dateDebut" th:value="${#temporals.format(event.dateDebut, 'yyyy-MM-dd''T''HH:mm')}" required>
+                                </div>
+                            </div>
+                            <!-- Date fin -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-calendar-check me-1"></i> Date fin
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-calendar-check"></i></span>
+                                    <input type="datetime-local" class="form-control" name="dateFin" th:value="${event.dateFin != null ? #temporals.format(event.dateFin, 'yyyy-MM-dd''T''HH:mm') : ''}">
+                                </div>
+                            </div>
+                            <!-- Prix min/max -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-euro-sign me-1"></i> Prix (€) <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Min</span>
+                                    <input type="number" class="form-control" name="prixMin" min="0" step="0.01" th:value="${event.prixMin}" required>
+                                    <span class="input-group-text">Max</span>
+                                    <input type="number" class="form-control" name="prixMax" min="0" step="0.01" th:value="${event.prixMax}" required>
+                                </div>
+                            </div>
+                            <!-- Capacité -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-users me-1"></i> Capacité <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-users"></i></span>
+                                    <input type="number" class="form-control" name="capacite" min="1" th:value="${event.capacite}" required>
+                                </div>
+                            </div>
+                            <!-- Statut -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="fa-solid fa-bolt me-1"></i> Statut <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-bolt"></i></span>
+                                    <select class="form-select" name="statut" required>
+                                        <option value="À venir" th:selected="${event.statut == 'À venir'}">À venir</option>
+                                        <option value="En cours" th:selected="${event.statut == 'En cours'}">En cours</option>
+                                        <option value="Terminé" th:selected="${event.statut == 'Terminé'}">Terminé</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- Image actuelle -->
+                            <div class="col-12 mb-3">
+                                <label class="form-label fw-semibold"><i class="fa-solid fa-image me-1"></i> Image actuelle</label>
+                                <div class="mt-2 border p-2 rounded d-inline-block">
+                                    <img th:if="${event.imageUrl != null}" th:src="@{${event.imageUrl}}" alt="Image actuelle" class="event-image-preview" />
+                                    <div th:if="${event.imageUrl == null}" class="text-center text-muted p-4">
+                                        <i class="fa-solid fa-image-slash fa-2x mb-2"></i>
+                                        <p>Pas d'image disponible</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Nouveau fichier image -->
+                            <div class="col-12 mb-3">
+                                <label for="imageFileEdit" class="form-label fw-semibold">
+                                    <i class="fa-solid fa-upload me-1"></i> Changer l'image
+                                </label>
+                                <input type="file" name="imageFile" id="imageFileEdit" class="form-control" accept="image/*" />
+                                <div class="form-text">Laissez vide pour conserver l'image actuelle</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="modal-footer d-flex justify-content-end gap-2 border-top-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #e4821e 0%, #a35c0d 100%); border: none;">
+                        <i class="fas fa-pen-to-square me-1"></i>Modifier l'événement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal confirmation suppression -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmDeleteLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmation de suppression
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer l'événement <strong id="eventName"></strong> ?</p>
+                    <p class="text-danger small">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteForm" method="post" th:action="@{/admin/events/delete/__id__}">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<script>
+    function prepareDeleteModal(button) {
+        const eventId = button.getAttribute('data-id');
+        const eventName = button.getAttribute('data-name');
+
+        // Met le nom dans le modal
+        document.getElementById('eventName').textContent = eventName;
+
+        // Met à jour l'action du formulaire avec l'ID correct
+        const form = document.getElementById('deleteForm');
+        const action = form.getAttribute('th:action'); // Si utilisé avec Thymeleaf
+        if (action) {
+            form.setAttribute('action', action.replace('__id__', eventId));
+        } else {
+            form.setAttribute('action', `/admin/events/delete/${eventId}`);
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const rows = document.querySelectorAll('tbody tr');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    });
+
+    // Validation formulaire ajout/modification événement
+    function validateEventForm(form) {
+        const dateDebutInput = form.querySelector('input[name="dateDebut"]');
+        const dateFinInput = form.querySelector('input[name="dateFin"]');
+        const now = new Date();
+        const dateDebut = new Date(dateDebutInput.value);
+        const dateFin = dateFinInput.value ? new Date(dateFinInput.value) : null;
+
+        if (dateDebut < now.setHours(0,0,0,0)) {
+            alert("La date de début ne peut pas être antérieure à aujourd'hui.");
+            dateDebutInput.focus();
+            return false;
+        }
+        if (dateFin && dateFin < dateDebut) {
+            alert("La date de fin ne peut pas être antérieure à la date de début.");
+            dateFinInput.focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
